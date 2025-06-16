@@ -49,14 +49,15 @@ export default defineEventHandler(() => {
           },
           {
             numero: 8,
-            titulo: "Acerca de",
-            descripcion: "Información de los creadores"
+            titulo: "Futuro de las búsquedas en base de datos",
+            descripcion: "Búsqueda avanzada en inteligencia artificial"
           },
           {
             numero: 9,
-            titulo: "Futuro de las búsquedas en base de datos",
-            descripcion: "Búsqueda avanzada en inteligencia artificial"
-          }
+            titulo: "Acerca de",
+            descripcion: "Información de los creadores"
+          },
+          
         ]
       }
     };

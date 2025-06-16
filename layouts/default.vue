@@ -1,292 +1,384 @@
+<!-- layouts/default.vue -->
 <template>
-  <v-app class="animated-app" :style="{ background: currentGradient }">
-    <!-- Barra de navegación con colores animados -->
-    <v-app-bar 
-      app 
-      dark
-      :style="{ 
-        background: currentNavbarColor,
-        transition: 'background 2s ease-in-out'
-      }"
-    >
-      <v-spacer />
-      <v-btn to="/" text>Inicio</v-btn>
-      <v-btn to="/navegacion" text>Navegación</v-btn>
-      <v-btn to="/estrategiasbusquedas" text>Estrategias</v-btn>
-      <v-btn to="/basesdatos" text>Bases de Datos</v-btn>
-      <v-btn to="/gestionresultados" text>Gestión de Resultados</v-btn>
+  <v-app class="database-app">
+    <!-- Loading overlay -->
+    <transition name="fade">
+      <div v-if="isLoading" class="loading-overlay">
+        <v-progress-circular indeterminate size="64" color="primary" class="loading-spinner" />
+        <p class="loading-text">Cargando aplicación...</p>
+      </div>
+    </transition>
 
-      <v-btn to="/futuro" text>Futuro</v-btn>
-    </v-app-bar>
+    <!-- Componente de navegación -->
+    <AppNavbar @toggle-sidebar="toggleSidebar" />
+
+    <!-- Sidebar lateral opcional -->
+    <AppSidebar v-if="showSidebar" :is-open="sidebarOpen" @close="closeSidebar" />
 
     <!-- Contenido principal -->
-    <v-main class="main-content">
-      <div class="cursor-glow" ref="cursorGlow"></div>
-      <div class="floating-particles">
-        <div 
-          v-for="i in 15" 
-          :key="i" 
-          class="particle" 
-          :style="getParticleStyle(i)"
-        ></div>
+    <v-main class="main-content" :class="{ 'with-sidebar': showSidebar && sidebarOpen }">
+      <!-- Efectos de fondo -->
+      <BackgroundEffects />
+
+      <!-- Partículas flotantes -->
+      <FloatingParticles :particle-count="particleCount" />
+
+      <!-- Breadcrumbs -->
+      <div v-if="showBreadcrumbs" class="breadcrumbs-wrapper">
+        <v-breadcrumbs :items="breadcrumbItems" class="custom-breadcrumbs">
+          <template #divider>
+            <v-icon icon="mdi-chevron-right" size="small" />
+          </template>
+        </v-breadcrumbs>
       </div>
-      <slot />
+
+      <!-- Contenido de la página -->
+      <div class="content-wrapper">
+        <!-- Error boundary -->
+        <div v-if="hasError" class="error-container">
+          <v-alert type="error" variant="tonal" closable @click:close="clearError">
+            <template #title>
+              Error en la aplicación
+            </template>
+            {{ errorMessage }}
+          </v-alert>
+        </div>
+
+        <!-- Slot principal para el contenido -->
+        <transition name="page-transition" mode="out-in">
+          <slot />
+        </transition>
+      </div>
+
+      <!-- Scroll to top button -->
+      <transition name="fade">
+        <v-btn v-if="showScrollTop" class="scroll-top-btn" icon="mdi-chevron-up" size="large" color="primary"
+          elevation="4" @click="scrollToTop" />
+      </transition>
     </v-main>
+
+    <!-- Componente de footer -->
+    <AppFooter />
+
+    <!-- Snackbar para notificaciones globales -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout" location="top right"
+      variant="tonal">
+      {{ snackbar.message }}
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
+
+    <!-- Dialog de confirmación global -->
+    <v-dialog v-model="confirmDialog.show" max-width="400" persistent>
+      <v-card>
+        <v-card-title class="text-h6">
+          {{ confirmDialog.title }}
+        </v-card-title>
+        <v-card-text>
+          {{ confirmDialog.message }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="handleConfirmCancel">
+            Cancelar
+          </v-btn>
+          <v-btn color="primary" variant="tonal" @click="handleConfirmAccept">
+            Confirmar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import AppNavbar from '~/components/AppNavbar.vue'
+import AppFooter from '~/components/AppFooter.vue'
+import AppSidebar from '~/components/AppSidebar.vue'
+import BackgroundEffects from '~/components/BackgroundEffects.vue'
+import FloatingParticles from '~/components/FloatingParticles.vue'
 
-const cursorGlow = ref(null)
+// Reactive data
+const isLoading = ref(true)
+const sidebarOpen = ref(false)
+const showScrollTop = ref(false)
+const hasError = ref(false)
+const errorMessage = ref('')
 
-// Gradientes que irán cambiando en todo el fondo
-const gradients = [
-  'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)',
-  'linear-gradient(135deg, #8e44ad 0%, #3498db 100%)',
-  'linear-gradient(135deg, #e74c3c 0%, #f39c12 100%)',
-  'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)',
-  'linear-gradient(135deg, #34495e 0%, #9b59b6 100%)',
-  'linear-gradient(135deg, #16a085 0%, #f4d03f 100%)',
-  'linear-gradient(135deg, #d35400 0%, #e67e22 100%)',
-  'linear-gradient(135deg, #2980b9 0%, #6bb6ff 100%)'
-]
+// Configuración dinámica
+const particleCount = ref(12)
+const showSidebar = ref(true)
+const showBreadcrumbs = ref(true)
 
-// Colores sutiles para la barra de navegación que coordinan con los gradientes
-const navbarColors = [
-  'linear-gradient(90deg, rgba(44, 62, 80, 0.9) 0%, rgba(52, 152, 219, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(142, 68, 173, 0.9) 0%, rgba(52, 152, 219, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(231, 76, 60, 0.9) 0%, rgba(243, 156, 18, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(39, 174, 96, 0.9) 0%, rgba(46, 204, 113, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(52, 73, 94, 0.9) 0%, rgba(155, 89, 182, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(22, 160, 133, 0.9) 0%, rgba(244, 208, 63, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(211, 84, 0, 0.9) 0%, rgba(230, 126, 34, 0.8) 100%)',
-  'linear-gradient(90deg, rgba(41, 128, 185, 0.9) 0%, rgba(107, 182, 255, 0.8) 100%)'
-]
+// Snackbar global
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'info',
+  timeout: 4000
+})
 
-// Colores para las partículas que coordinan con cada tema
-const particleColorSets = [
-  // Azul clásico
-  ['rgba(52, 152, 219, 0.8)', 'rgba(44, 62, 80, 0.7)', 'rgba(174, 214, 241, 0.6)'],
-  // Púrpura-azul
-  ['rgba(142, 68, 173, 0.8)', 'rgba(52, 152, 219, 0.7)', 'rgba(187, 143, 206, 0.6)'],
-  // Rojo-naranja
-  ['rgba(231, 76, 60, 0.8)', 'rgba(243, 156, 18, 0.7)', 'rgba(245, 183, 177, 0.6)'],
-  // Verde
-  ['rgba(39, 174, 96, 0.8)', 'rgba(46, 204, 113, 0.7)', 'rgba(169, 223, 191, 0.6)'],
-  // Gris-púrpura
-  ['rgba(52, 73, 94, 0.8)', 'rgba(155, 89, 182, 0.7)', 'rgba(195, 155, 211, 0.6)'],
-  // Turquesa-amarillo
-  ['rgba(22, 160, 133, 0.8)', 'rgba(244, 208, 63, 0.7)', 'rgba(162, 217, 206, 0.6)'],
-  // Naranja
-  ['rgba(211, 84, 0, 0.8)', 'rgba(230, 126, 34, 0.7)', 'rgba(245, 176, 65, 0.6)'],
-  // Azul cielo
-  ['rgba(41, 128, 185, 0.8)', 'rgba(107, 182, 255, 0.7)', 'rgba(174, 214, 241, 0.6)']
-]
+// Dialog de confirmación global
+const confirmDialog = ref({
+  show: false,
+  title: '',
+  message: '',
+  onConfirm: null,
+  onCancel: null
+})
 
-let gradientIndex = 0
-let gradientInterval = null
-let mouseX = 0
-let mouseY = 0
+// Route watcher para breadcrumbs
+const route = useRoute()
 
-const currentGradient = ref(gradients[0])
-const currentNavbarColor = ref(navbarColors[0])
-const currentParticleColors = ref(particleColorSets[0])
+const breadcrumbItems = computed(() => {
+  const items = [
+    { title: 'Inicio', href: '/' }
+  ]
 
-// Cambiar gradientes automáticamente
-const startGradientAnimation = () => {
-  gradientInterval = setInterval(() => {
-    gradientIndex = (gradientIndex + 1) % gradients.length
-    currentGradient.value = gradients[gradientIndex]
-    currentNavbarColor.value = navbarColors[gradientIndex]
-    currentParticleColors.value = particleColorSets[gradientIndex]
-  }, 4000) // Cambia cada 4 segundos
+  if (route.path !== '/') {
+    const pathSegments = route.path.split('/').filter(Boolean)
+    pathSegments.forEach((segment, index) => {
+      const path = '/' + pathSegments.slice(0, index + 1).join('/')
+      items.push({
+        title: segment.charAt(0).toUpperCase() + segment.slice(1),
+        href: path,
+        disabled: index === pathSegments.length - 1
+      })
+    })
+  }
+
+  return items
+})
+
+// Methods
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value
 }
 
-// Efecto de brillo que sigue el cursor
-const updateCursorGlow = (event) => {
-  mouseX = event.clientX
-  mouseY = event.clientY
-  
-  if (cursorGlow.value) {
-    cursorGlow.value.style.left = `${mouseX - 150}px`
-    cursorGlow.value.style.top = `${mouseY - 150}px`
+const closeSidebar = () => {
+  sidebarOpen.value = false
+}
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
+const clearError = () => {
+  hasError.value = false
+  errorMessage.value = ''
+}
+
+const showNotification = (message, color = 'info', timeout = 4000) => {
+  snackbar.value = {
+    show: true,
+    message,
+    color,
+    timeout
   }
 }
 
-// Estilos dinámicos para partículas flotantes con colores cambiantes
-const getParticleStyle = (index) => {
-  const delay = index * 0.5
-  const duration = 8 + (index % 4)
-  const size = 4 + (index % 8)
-  const left = (index * 7) % 100
-  
-  // Seleccionar color basado en el índice de la partícula
-  const colorIndex = index % currentParticleColors.value.length
-  const particleColor = currentParticleColors.value[colorIndex]
-  
-  return {
-    left: `${left}%`,
-    animationDelay: `${delay}s`,
-    animationDuration: `${duration}s`,
-    width: `${size}px`,
-    height: `${size}px`,
-    background: particleColor,
-    boxShadow: `0 0 ${size * 2}px ${particleColor}`,
-    transition: 'all 2s ease-in-out'
+const showConfirmDialog = (title, message, onConfirm, onCancel = null) => {
+  confirmDialog.value = {
+    show: true,
+    title,
+    message,
+    onConfirm,
+    onCancel
   }
 }
 
+const handleConfirmAccept = () => {
+  if (confirmDialog.value.onConfirm) {
+    confirmDialog.value.onConfirm()
+  }
+  confirmDialog.value.show = false
+}
+
+const handleConfirmCancel = () => {
+  if (confirmDialog.value.onCancel) {
+    confirmDialog.value.onCancel()
+  }
+  confirmDialog.value.show = false
+}
+
+const handleScroll = () => {
+  showScrollTop.value = window.scrollY > 300
+}
+
+const handleError = (error) => {
+  hasError.value = true
+  errorMessage.value = error.message || 'Ha ocurrido un error inesperado'
+  console.error('Layout Error:', error)
+}
+
+// Lifecycle hooks
 onMounted(() => {
-  startGradientAnimation()
-  document.addEventListener('mousemove', updateCursorGlow)
+  // Simular carga inicial
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1500)
+
+  // Event listeners
+  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('error', handleError)
+
+  // Ajustar partículas según el rendimiento del dispositivo
+  if (navigator.hardwareConcurrency < 4) {
+    particleCount.value = 6
+  }
 })
 
 onUnmounted(() => {
-  if (gradientInterval) {
-    clearInterval(gradientInterval)
-  }
-  document.removeEventListener('mousemove', updateCursorGlow)
+  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('error', handleError)
 })
+
+// Watchers
+watch(() => route.path, () => {
+  // Cerrar sidebar en rutas móviles
+  if (window.innerWidth < 768) {
+    sidebarOpen.value = false
+  }
+})
+
+// Provide global methods para uso en componentes hijos
+provide('showNotification', showNotification)
+provide('showConfirmDialog', showConfirmDialog)
+provide('handleError', handleError)
 </script>
 
 <style scoped>
-.animated-app {
-  transition: background 2s ease-in-out;
+.database-app {
+  /* Fondo base temático para bases de datos */
+  background: linear-gradient(135deg,
+      #154360 0%,
+      /* Azul oscuro profesional */
+      #2874a6 25%,
+      /* Azul medio */
+      #1b4f72 50%,
+      /* Azul profundo */
+      #21618c 75%,
+      /* Azul corporativo */
+      #1a5490 100%
+      /* Azul final */
+    );
   min-height: 100vh;
+  color: #ecf0f1;
+  position: relative;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(21, 67, 96, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  color: #ecf0f1;
+  animation: pulse 2s infinite;
 }
 
 .main-content {
   position: relative;
   overflow: hidden;
+  min-height: calc(100vh - 64px);
+  transition: margin-left 0.3s ease;
 }
 
-.cursor-glow {
-  position: fixed;
-  width: 300px;
-  height: 300px;
-  pointer-events: none;
-  z-index: 1000;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0.15) 30%,
-    rgba(255, 255, 255, 0.05) 60%,
-    transparent 100%
-  );
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  filter: blur(1px);
+.main-content.with-sidebar {
+  margin-left: 280px;
 }
 
-.floating-particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
+.breadcrumbs-wrapper {
+  position: relative;
+  z-index: 101;
+  padding: 10px 20px 0;
 }
 
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  animation: float infinite ease-in-out;
-  /* El color y box-shadow se definen dinámicamente en JavaScript */
-  transition: all 2s ease-in-out;
+.custom-breadcrumbs {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 10px;
 }
 
-/* Animación mejorada con más variaciones */
-@keyframes float {
-  0% {
-    transform: translateY(100vh) rotate(0deg) scale(0.5);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-    transform: translateY(90vh) rotate(36deg) scale(1);
-  }
-  25% {
-    transform: translateY(75vh) rotate(90deg) scale(0.8);
-  }
-  50% {
-    transform: translateY(50vh) rotate(180deg) scale(1.2);
-  }
-  75% {
-    transform: translateY(25vh) rotate(270deg) scale(0.9);
-  }
-  90% {
-    opacity: 1;
-    transform: translateY(10vh) rotate(324deg) scale(1);
-  }
-  100% {
-    transform: translateY(-100px) rotate(360deg) scale(0.3);
-    opacity: 0;
-  }
-}
-
-/* Efecto de ondas en el fondo */
-.main-content::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
-  animation: wave 6s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.main-content::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  animation: wave 8s ease-in-out infinite reverse;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes wave {
-  0%, 100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 0.3;
-  }
-  33% {
-    transform: scale(1.1) rotate(120deg);
-    opacity: 0.5;
-  }
-  66% {
-    transform: scale(0.9) rotate(240deg);
-    opacity: 0.4;
-  }
-}
-
-/* Asegurar que el contenido esté por encima de los efectos */
-:deep(.v-main__wrap) {
+.content-wrapper {
   position: relative;
   z-index: 100;
   backdrop-filter: blur(0.5px);
+  padding: 20px;
+  min-height: calc(100vh - 140px);
 }
 
-/* Efecto glassmorphism sutil en el contenido */
+.error-container {
+  margin-bottom: 20px;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Transiciones */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.page-transition-enter-active,
+.page-transition-leave-active {
+  transition: all 0.4s ease;
+}
+
+.page-transition-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.page-transition-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* Efecto glassmorphism para las tarjetas */
 :deep(.v-card) {
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* Animación de aparición suave para el contenido */
-:deep(.v-main__wrap > *) {
+:deep(.content-wrapper > *) {
   animation: fadeInUp 0.8s ease-out;
 }
 
@@ -295,9 +387,86 @@ onUnmounted(() => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Mejoras para el footer */
+:deep(.v-footer) {
+  background: rgba(21, 67, 96, 0.95) !important;
+  backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Mejoras para breadcrumbs */
+:deep(.v-breadcrumbs-item) {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+:deep(.v-breadcrumbs-item--disabled) {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content.with-sidebar {
+    margin-left: 0;
+  }
+
+  .content-wrapper {
+    padding: 15px;
+  }
+
+  .scroll-top-btn {
+    bottom: 20px;
+    right: 15px;
+  }
+
+  .breadcrumbs-wrapper {
+    padding: 10px 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: 10px;
+  }
+
+  .loading-text {
+    font-size: 1rem;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  :deep(.v-card) {
+    background: rgba(30, 30, 30, 0.9) !important;
+    color: #ecf0f1;
   }
 }
 </style>
