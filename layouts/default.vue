@@ -98,7 +98,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppNavbar from '~/components/AppNavbar.vue'
-import AppFooter from '~/components/AppFooter.vue'
+import AppFooter from '~/components/Appfooter.vue'
 import AppSidebar from '~/components/AppSidebar.vue'
 import BackgroundEffects from '~/components/BackgroundEffects.vue'
 import FloatingParticles from '~/components/FloatingParticles.vue'
