@@ -35,17 +35,20 @@ export default defineEventHandler(() => {
             {
               operador: "AND",
               funcion: "Busca resultados que incluyan ambos términos.",
-              ejemplo: "educación inclusiva AND tecnología"
+              ejemplo: "educación inclusiva AND tecnología",
+              icon: "mdi-Unfold-More-Vertical"
             },
             {
               operador: "OR",
               funcion: "Busca resultados que incluyan uno u otro término.",
-              ejemplo: "educación inclusiva OR inclusión educativa"
+              ejemplo: "educación inclusiva OR inclusión educativa",
+              icon: "mdi-gate-or"
             },
             {
               operador: "NOT",
               funcion: "Excluye resultados que contengan un término.",
-              ejemplo: "inclusión educativa NOT educación especial"
+              ejemplo: "inclusión educativa NOT educación especial",
+              icon: "mdi-gate-not"
             }
           ],
           consejo: "Usa paréntesis para estructurar ecuaciones complejas."

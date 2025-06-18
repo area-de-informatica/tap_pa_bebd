@@ -7,247 +7,279 @@
     </div>
     
     <div v-else class="content-wrapper">
-      <!-- Header del Módulo -->
-      <v-card
-        class="enhanced-card mb-8 module-header-card"
-        elevation="8"
-        @mouseenter="onCardHover"
-        @mouseleave="onCardLeave"
-      >
-        <div class="card-glow"></div>
-        <v-card-title class="card-title">
-          <span class="title-icon">🗄️</span>
-          <span class="title-text">{{ modulo }}</span>
-        </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          Fundamentos esenciales para el manejo de información
-        </v-card-subtitle>
-        <v-card-text class="card-content">
-          <div class="objective-text">
-            <span class="objective-label">Objetivo:</span>
-            {{ objetivo }}
+      <!-- Hero Section del Módulo -->
+      <section class="hero-module-section mb-12">
+        <v-container fluid class="pa-0">
+          <div class="hero-module-content">
+            <v-container>
+              <v-row justify="center" align="center" class="min-height-hero">
+                <v-col cols="12" md="10" class="text-center">
+                  <v-fade-transition appear>
+                    <div>
+                      <h1 class="display-1 font-weight-bold text-white mb-4">
+                        <span class="module-title">{{ modulo }}</span>
+                      </h1>
+                      <p class="headline text-white mb-6 font-weight-light opacity-90">
+                        Fundamentos esenciales para el manejo de información
+                      </p>
+                      <div class="objective-banner">
+                        <div class="objective-content">
+                          <v-icon color="white" size="large" class="mr-3">mdi-target</v-icon>
+                          <span class="objective-text">{{ objetivo }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </v-fade-transition>
+                </v-col>
+              </v-row>
+            </v-container>
           </div>
-        </v-card-text>
-      </v-card>
+        </v-container>
+      </section>
 
-      <!-- Definición -->
-      <v-card
-        class="enhanced-card mb-8 definition-card"
-        elevation="8"
-        @mouseenter="onCardHover"
-        @mouseleave="onCardLeave"
-      >
-        <div class="card-glow"></div>
-        <v-card-title class="card-title">
-          <span class="title-icon">📖</span>
-          <span class="title-text">{{ contenido.definicion.titulo }}</span>
-        </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          Conceptos fundamentales que debes conocer
-        </v-card-subtitle>
-        <v-card-text class="card-content">
-          <div class="definition-text">
-            {{ contenido.definicion.descripcion }}
+      <!-- Definición con diseño atractivo -->
+      <v-row justify="center" class="mb-12">
+        <v-col cols="12" md="10">
+          <v-card elevation="8" class="definition-card rounded-xl">
+            <div class="card-header-gradient">
+              <v-card-title class="card-title-modern">
+                <div class="title-icon-container">
+                  <v-icon size="40" color="white">mdi-book-open-page-variant</v-icon>
+                </div>
+                <div>
+                  <h2 class="title-main">{{ contenido.definicion.titulo }}</h2>
+                  <p class="title-sub">Conceptos fundamentales que debes conocer</p>
+                </div>
+              </v-card-title>
+            </div>
+            <v-card-text class="pa-8">
+              <div class="definition-content">
+                <p class="definition-text">{{ contenido.definicion.descripcion }}</p>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- Comparación de Buscadores - Diseño Creativo -->
+      <section class="comparison-section mb-12">
+        <v-container>
+          <div class="section-header text-center mb-8">
+            <h2 class="section-title">{{ contenido.comparacion_buscadores.titulo }}</h2>
+            <p class="section-subtitle">Análisis comparativo de herramientas de búsqueda</p>
+            <div class="section-divider"></div>
           </div>
-        </v-card-text>
-      </v-card>
-
-      <!-- Comparación de Buscadores -->
-      <v-card
-        class="enhanced-card mb-8 comparison-card"
-        elevation="8"
-        @mouseenter="onCardHover"
-        @mouseleave="onCardLeave"
-      >
-        <div class="card-glow"></div>
-        <v-card-title class="card-title">
-          <span class="title-icon">🔍</span>
-          <span class="title-text">{{ contenido.comparacion_buscadores.titulo }}</span>
-        </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          Análisis comparativo de herramientas de búsqueda
-        </v-card-subtitle>
-        <v-card-text class="card-content">
-          <div class="comparison-grid">
-            <div 
+          
+          <v-row>
+            <v-col 
               v-for="(buscador, index) in contenido.comparacion_buscadores.comparativa" 
               :key="index"
-              class="comparison-item"
-              :style="{ animationDelay: `${index * 0.15}s` }"
+              cols="12" 
+              md="6" 
+              lg="4"
+              class="d-flex"
             >
-              <div class="comparison-header">
-                <div class="comparison-icon">🔍</div>
-                <h4 class="comparison-name">{{ buscador.nombre }}</h4>
-              </div>
-              <div class="comparison-details">
-                <div class="detail-item">
-                  <span class="detail-label">Tipo:</span>
-                  <span class="detail-value">{{ buscador.tipo }}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Características:</span>
-                  <div class="characteristics-list">
-                    <span 
-                      v-for="(caracteristica, idx) in buscador.caracteristicas" 
-                      :key="idx"
-                      class="characteristic-tag"
-                    >
-                      {{ caracteristica }}
-                    </span>
+              <v-card 
+                elevation="6" 
+                class="comparison-card-modern rounded-xl flex-grow-1"
+                :style="{ animationDelay: `${index * 0.15}s` }"
+              >
+                <div class="comparison-card-header" :class="`bg-gradient-${index % 3 + 1}`">
+                  <div class="comparison-icon-modern">
+                    <v-icon size="32" color="white">mdi-magnify</v-icon>
                   </div>
+                  <h3 class="comparison-title-modern">{{ buscador.nombre }}</h3>
+                </div>
+                
+                <v-card-text class="pa-6">
+                  <div class="comparison-content-modern">
+                    <div class="type-badge">
+                      <v-chip 
+                        :color="getTypeColor(index)" 
+                        variant="elevated" 
+                        size="small"
+                        class="mb-4"
+                      >
+                        {{ buscador.tipo }}
+                      </v-chip>
+                    </div>
+                    
+                    <div class="characteristics-section">
+                      <h4 class="characteristics-title">Características principales:</h4>
+                      <div class="characteristics-grid">
+                        <div 
+                          v-for="(caracteristica, idx) in buscador.caracteristicas" 
+                          :key="idx"
+                          class="characteristic-item"
+                        >
+                          <v-icon size="16" color="success" class="mr-2">mdi-check-circle</v-icon>
+                          <span>{{ caracteristica }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </section>
+
+      <!-- Tipos de Bases de Datos - Diseño Timeline -->
+      <section class="types-section mb-12">
+        <v-card elevation="8" class="types-container rounded-xl">
+          <div class="types-header">
+            <v-card-title class="types-title-section">
+              <v-icon size="48" color="white" class="mr-4">mdi-database</v-icon>
+              <div>
+                <h2 class="types-main-title">{{ contenido.tipos_bases_datos.titulo }}</h2>
+                <p class="types-subtitle">Clasificación y características principales</p>
+              </div>
+            </v-card-title>
+          </div>
+          
+          <v-card-text class="pa-0">
+            <div class="timeline-container">
+              <div 
+                v-for="(categoria, index) in contenido.tipos_bases_datos.categorias" 
+                :key="index"
+                class="timeline-item"
+                :class="{ 'timeline-item-reverse': index % 2 === 1 }"
+                :style="{ animationDelay: `${index * 0.2}s` }"
+              >
+                <div class="timeline-marker">
+                  <div class="timeline-number">{{ index + 1 }}</div>
+                </div>
+                
+                <div class="timeline-content">
+                  <v-card elevation="4" class="timeline-card rounded-lg">
+                    <v-card-title class="timeline-card-title">
+                      <h3>{{ categoria.nombre }}</h3>
+                    </v-card-title>
+                    <v-card-text class="timeline-card-content">
+                      <p class="category-description-modern">{{ categoria.descripcion }}</p>
+                      
+                      <div class="examples-section-modern">
+                        <h5 class="examples-title-modern">Ejemplos destacados:</h5>
+                        <div class="examples-chips">
+                          <v-chip 
+                            v-for="(ejemplo, idx) in categoria.ejemplos" 
+                            :key="idx"
+                            :color="getExampleColor(index)"
+                            variant="elevated"
+                            size="small"
+                            class="mr-2 mb-2"
+                          >
+                            {{ ejemplo }}
+                          </v-chip>
+                        </div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
                 </div>
               </div>
             </div>
-          </div>
-        </v-card-text>
-      </v-card>
+          </v-card-text>
+        </v-card>
+      </section>
 
-      <!-- Tipos de Bases de Datos -->
-      <v-card
-        class="enhanced-card mb-8 types-card"
-        elevation="8"
-        @mouseenter="onCardHover"
-        @mouseleave="onCardLeave"
-      >
-        <div class="card-glow"></div>
-        <v-card-title class="card-title">
-          <span class="title-icon">🗂️</span>
-          <span class="title-text">{{ contenido.tipos_bases_datos.titulo }}</span>
-        </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          Clasificación y características principales
-        </v-card-subtitle>
-        <v-card-text class="card-content">
-          <div class="types-grid">
-            <div 
-              v-for="(categoria, index) in contenido.tipos_bases_datos.categorias" 
-              :key="index"
-              class="type-category"
-              :style="{ animationDelay: `${index * 0.2}s` }"
-            >
-              <div class="category-header">
-                <div class="category-number">{{ index + 1 }}</div>
-                <h4 class="category-title">{{ categoria.nombre }}</h4>
-              </div>
-              <p class="category-description">{{ categoria.descripcion }}</p>
-              <div class="examples-section">
-                <span class="examples-label">Ejemplos:</span>
-                <div class="examples-list">
-                  <span 
-                    v-for="(ejemplo, idx) in categoria.ejemplos" 
-                    :key="idx"
-                    class="example-tag"
-                  >
-                    {{ ejemplo }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </v-card-text>
-      </v-card>
-
-      <!-- Acceso a Bases de Datos -->
-      <v-card
-        class="enhanced-card mb-8 access-card"
-        elevation="8"
-        @mouseenter="onCardHover"
-        @mouseleave="onCardLeave"
-      >
-        <div class="card-glow"></div>
-        <v-card-title class="card-title">
-          <span class="title-icon">🔑</span>
-          <span class="title-text">{{ contenido.acceso_bases_datos.titulo }}</span>
-        </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          Métodos y formas de acceder a la información
-        </v-card-subtitle>
-        <v-card-text class="card-content">
-          <div class="access-list">
-            <div 
-              v-for="(tipo, index) in contenido.acceso_bases_datos.tipos" 
-              :key="index"
-              class="access-item"
+      <!-- Acceso a Bases de Datos - Diseño Modular -->
+      <section class="access-section mb-12">
+        <div class="section-header text-center mb-8">
+          <h2 class="section-title">{{ contenido.acceso_bases_datos.titulo }}</h2>
+          <p class="section-subtitle">Métodos y formas de acceder a la información</p>
+          <div class="section-divider"></div>
+        </div>
+        
+        <v-row>
+          <v-col 
+            v-for="(tipo, index) in contenido.acceso_bases_datos.tipos" 
+            :key="index"
+            cols="12" 
+            md="6"
+            class="d-flex"
+          >
+            <v-card 
+              elevation="6" 
+              class="access-card-modern rounded-xl flex-grow-1"
               :style="{ animationDelay: `${index * 0.1}s` }"
             >
-              <div class="access-icon">🔓</div>
-              <div class="access-content">
-                <h4 class="access-title">{{ tipo.nombre }}</h4>
-                <p class="access-description">{{ tipo.descripcion }}</p>
+              <div class="access-card-top">
+                <div class="access-icon-container" :class="`bg-access-${index % 4 + 1}`">
+                  <v-icon size="40" color="white">mdi-key-variant</v-icon>
+                </div>
               </div>
-            </div>
-          </div>
-        </v-card-text>
-      </v-card>
+              
+              <v-card-text class="pa-6">
+                <h3 class="access-title-modern">{{ tipo.nombre }}</h3>
+                <p class="access-description-modern">{{ tipo.descripcion }}</p>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </section>
 
-      <!-- Importancia -->
-      <v-card
-        class="enhanced-card importance-card"
-        elevation="8"
-        @mouseenter="onCardHover"
-        @mouseleave="onCardLeave"
-      >
-        <div class="card-glow"></div>
-        <v-card-title class="card-title">
-          <span class="title-icon">⭐</span>
-          <span class="title-text">{{ contenido.importancia.titulo }}</span>
-        </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          Por qué son fundamentales en el mundo actual
-        </v-card-subtitle>
-        <v-card-text class="card-content">
-          <div class="importance-grid">
-            <div 
-              v-for="(razon, index) in contenido.importancia.razones" 
-              :key="index"
-              class="importance-item"
-              :style="{ animationDelay: `${index * 0.12}s` }"
-            >
-              <div class="importance-number">{{ index + 1 }}</div>
-              <div class="importance-content">
-                <h4 class="importance-title">{{ razon.titulo }}</h4>
-                <p class="importance-description">{{ razon.descripcion }}</p>
+      <!-- Importancia - Diseño Grid Interactivo -->
+      <section class="importance-section">
+        <v-card elevation="12" class="importance-container rounded-xl">
+          <div class="importance-header">
+            <v-card-title class="importance-title-section">
+              <v-icon size="48" color="white" class="mr-4">mdi-star-circle</v-icon>
+              <div>
+                <h2 class="importance-main-title">{{ contenido.importancia.titulo }}</h2>
+                <p class="importance-subtitle">Por qué son fundamentales en el mundo actual</p>
               </div>
-            </div>
+            </v-card-title>
           </div>
-        </v-card-text>
-      </v-card>
+          
+          <v-card-text class="pa-8">
+            <v-row>
+              <v-col 
+                v-for="(razon, index) in contenido.importancia.razones" 
+                :key="index"
+                cols="12" 
+                md="6" 
+                lg="4"
+                class="d-flex"
+              >
+                <v-card 
+                  elevation="4" 
+                  class="importance-card-modern rounded-lg flex-grow-1"
+                  :style="{ animationDelay: `${index * 0.12}s` }"
+                >
+                  <v-card-text class="pa-6 text-center">
+                    <div class="importance-icon-container" :class="`bg-importance-${index % 6 + 1}`">
+                      <span class="importance-number">{{ index + 1 }}</span>
+                    </div>
+                    <h4 class="importance-card-title">{{ razon.titulo }}</h4>
+                    <p class="importance-card-description">{{ razon.descripcion }}</p>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </section>
     </div>
   </v-container>
 </template>
 
 <script setup>
-import { useBasesDatosStore } from '@/stores/BasesDatos'
+import { useBasesDatosStore } from '/stores/BasesDatos'
 import { onMounted, ref } from 'vue'
 
 const { modulo, objetivo, contenido, fetchBasesDatos } = useBasesDatosStore()
 const pending = ref(true)
 
-// Animaciones de hover para las tarjetas
-const onCardHover = (event) => {
-  const card = event.currentTarget
-  const glow = card.querySelector('.card-glow')
-  
-  card.style.transform = 'translateY(-10px) scale(1.02)'
-  card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.3)'
-  
-  if (glow) {
-    glow.style.opacity = '1'
-    glow.style.transform = 'scale(1.1)'
-  }
+// Función para obtener colores por tipo
+const getTypeColor = (index) => {
+  const colors = ['primary', 'success', 'info', 'warning', 'error', 'purple']
+  return colors[index % colors.length]
 }
 
-const onCardLeave = (event) => {
-  const card = event.currentTarget
-  const glow = card.querySelector('.card-glow')
-  
-  card.style.transform = 'translateY(0) scale(1)'
-  card.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2)'
-  
-  if (glow) {
-    glow.style.opacity = '0'
-    glow.style.transform = 'scale(1)'
-  }
+const getExampleColor = (index) => {
+  const colors = ['info', 'success', 'warning', 'primary', 'purple', 'teal']
+  return colors[index % colors.length]
 }
 
 onMounted(async () => {
@@ -259,6 +291,69 @@ onMounted(async () => {
 <style scoped>
 .content-wrapper {
   animation: fadeInUp 0.8s ease-out;
+}
+
+/* Hero Section */
+.hero-module-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 0 2rem 2rem;
+}
+
+.hero-module-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>') no-repeat;
+  background-size: cover;
+  opacity: 0.3;
+}
+
+.hero-module-content {
+  position: relative;
+  z-index: 1;
+}
+
+.min-height-hero {
+  min-height: 50vh;
+}
+
+.module-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ffffff, #e3f2fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.objective-banner {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 20px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.objective-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+}
+
+.objective-text {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 /* Loading Animation */
@@ -273,14 +368,14 @@ onMounted(async () => {
 .loading-spinner {
   width: 60px;
   height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #fff;
+  border: 4px solid rgba(102, 126, 234, 0.3);
+  border-top: 4px solid #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 .loading-text {
-  color: white;
+  color: #667eea;
   font-size: 1.2rem;
   margin-top: 1rem;
   font-weight: 500;
@@ -291,406 +386,424 @@ onMounted(async () => {
   100% { transform: rotate(360deg); }
 }
 
-/* Enhanced Cards */
-.enhanced-card {
-  position: relative;
-  background: rgba(30, 30, 30, 0.9) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* Definition Card */
+.definition-card {
+  background: white;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
-.enhanced-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f39c12);
-  background-size: 300% 100%;
-  animation: gradientShift 3s ease infinite;
+.card-header-gradient {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  padding: 0;
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.card-glow {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  opacity: 0;
-  transition: all 0.4s ease;
-  pointer-events: none;
-}
-
-/* Card Content Styling */
-.card-title {
+.card-title-modern {
   display: flex;
   align-items: center;
-  color: white !important;
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  padding: 24px 24px 8px 24px !important;
+  padding: 30px;
+  color: white;
 }
 
-.title-icon {
-  font-size: 2rem;
-  margin-right: 12px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+.title-icon-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 15px;
+  margin-right: 20px;
 }
 
-.title-text {
-  background: linear-gradient(135deg, #fff, #e0e0e0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.title-main {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.card-subtitle {
-  color: rgba(255, 255, 255, 0.7) !important;
-  font-size: 1rem !important;
-  padding: 0 24px 16px 24px !important;
+.title-sub {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 5px 0 0 0;
   font-weight: 400;
 }
 
-.card-content {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 1rem !important;
-  line-height: 1.6;
-  padding: 0 24px 24px 24px !important;
-}
-
-/* Specific Card Colors */
-.module-header-card::before {
-  background: linear-gradient(90deg, #2c3e50, #3498db);
-}
-
-.definition-card::before {
-  background: linear-gradient(90deg, #8e44ad, #3498db);
-}
-
-.comparison-card::before {
-  background: linear-gradient(90deg, #e67e22, #f39c12);
-}
-
-.types-card::before {
-  background: linear-gradient(90deg, #27ae60, #2ecc71);
-}
-
-.access-card::before {
-  background: linear-gradient(90deg, #e74c3c, #c0392b);
-}
-
-.importance-card::before {
-  background: linear-gradient(90deg, #f39c12, #d35400);
-}
-
-/* Module Header Styles */
-.objective-text {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 3px solid #3498db;
-}
-
-.objective-label {
-  font-weight: 600;
-  color: #3498db;
-  margin-right: 8px;
-}
-
-/* Definition Styles */
-.definition-text {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 3px solid #8e44ad;
-  line-height: 1.7;
-}
-
-/* Comparison Grid */
-.comparison-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.comparison-item {
-  background: rgba(255, 255, 255, 0.05);
+.definition-content {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
   border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-  animation: slideInUp 0.6s ease-out both;
+  padding: 25px;
+  border-left: 4px solid #4facfe;
 }
 
-.comparison-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.comparison-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.comparison-icon {
-  font-size: 1.5rem;
-  margin-right: 12px;
-  background: linear-gradient(135deg, #e67e22, #f39c12);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.comparison-name {
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 600;
+.definition-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #2c3e50;
   margin: 0;
 }
 
-.comparison-details {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Section Headers */
+.section-header {
+  margin-bottom: 3rem;
 }
 
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
 }
 
-.detail-label {
-  font-weight: 600;
-  color: #f39c12;
-  font-size: 0.9rem;
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  font-weight: 400;
 }
 
-.detail-value {
-  color: rgba(255, 255, 255, 0.9);
+.section-divider {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+  margin: 1rem auto;
 }
 
-.characteristics-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+/* Comparison Section */
+.comparison-section {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  padding: 4rem 0;
+  border-radius: 2rem;
 }
 
-.characteristic-tag {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Types Grid */
-.types-grid {
-  display: grid;
-  gap: 20px;
-}
-
-.type-category {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.comparison-card-modern {
+  background: white;
+  overflow: hidden;
   transition: all 0.3s ease;
+  animation: slideInUp 0.6s ease-out both;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.comparison-card-modern:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+.comparison-card-header {
+  padding: 25px;
+  text-align: center;
+  position: relative;
+}
+
+.bg-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-gradient-2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.bg-gradient-3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+.comparison-icon-modern {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 15px;
+  display: inline-flex;
+  margin-bottom: 15px;
+}
+
+.comparison-title-modern {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-content-modern {
+  height: 100%;
+}
+
+.type-badge {
+  text-align: center;
+}
+
+.characteristics-section {
+  margin-top: 1rem;
+}
+
+.characteristics-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.characteristics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.characteristic-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Types Section - Timeline */
+.types-container {
+  background: white;
+  overflow: hidden;
+}
+
+.types-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+}
+
+.types-title-section {
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  color: white;
+}
+
+.types-main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.types-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 5px 0 0 0;
+  font-weight: 400;
+}
+
+.timeline-container {
+  position: relative;
+  padding: 3rem 1rem;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #667eea, #764ba2);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
   animation: slideInLeft 0.6s ease-out both;
 }
 
-.type-category:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(8px);
+.timeline-item-reverse {
+  flex-direction: row-reverse;
+  animation: slideInRight 0.6s ease-out both;
 }
 
-.category-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
+.timeline-marker {
+  position: relative;
+  z-index: 2;
+  margin: 0 2rem;
 }
 
-.category-number {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: white;
-  width: 40px;
-  height: 40px;
+.timeline-number {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1.1rem;
-  margin-right: 16px;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+  font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.category-title {
-  color: white;
-  font-size: 1.3rem;
+.timeline-content {
+  flex: 1;
+  max-width: 400px;
+}
+
+.timeline-card {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.timeline-card-title {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.timeline-card-title h3 {
+  color: #2c3e50;
   font-weight: 600;
   margin: 0;
 }
 
-.category-description {
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0 0 16px 0;
+.timeline-card-content {
+  padding: 20px;
+}
+
+.category-description-modern {
+  color: #555;
   line-height: 1.6;
+  margin-bottom: 1rem;
 }
 
-.examples-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.examples-section-modern {
+  margin-top: 1rem;
 }
 
-.examples-label {
-  font-weight: 600;
-  color: #2ecc71;
+.examples-title-modern {
   font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
 }
 
-.examples-list {
+.examples-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
-.example-tag {
-  background: rgba(46, 204, 113, 0.2);
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 0.9rem;
-  color: #2ecc71;
-  border: 1px solid rgba(46, 204, 113, 0.3);
-  font-weight: 500;
+/* Access Section */
+.access-section {
+  padding: 2rem 0;
 }
 
-/* Access List */
-.access-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.access-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border-left: 3px solid #e74c3c;
-  animation: slideInRight 0.6s ease-out both;
-  transition: all 0.3s ease;
-}
-
-.access-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(-8px);
-}
-
-.access-icon {
-  font-size: 1.8rem;
-  margin-right: 16px;
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.access-content {
-  flex: 1;
-}
-
-.access-title {
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.access-description {
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* Importance Grid */
-.importance-grid {
-  display: grid;
-  gap: 16px;
-}
-
-.importance-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.access-card-modern {
+  background: white;
+  overflow: hidden;
   transition: all 0.3s ease;
   animation: slideInUp 0.6s ease-out both;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.importance-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+.access-card-modern:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
-.importance-number {
-  background: linear-gradient(135deg, #f39c12, #d35400);
-  color: white;
-  width: 40px;
-  height: 40px;
+.access-card-top {
+  padding: 20px 20px 0 20px;
+  text-align: center;
+}
+
+.access-icon-container {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-right: 16px;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+  margin-bottom: 1rem;
 }
 
-.importance-content {
-  flex: 1;
+.bg-access-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-access-2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.bg-access-3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.bg-access-4 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+.access-title-modern {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.importance-title {
+.access-description-modern {
+  color: #555;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Importance Section */
+.importance-container {
+  background: white;
+  overflow: hidden;
+}
+
+.importance-header {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  padding: 0;
+}
+
+.importance-title-section {
+  display: flex;
+  align-items: center;
+  padding: 30px;
   color: white;
+}
+
+.importance-main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.importance-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 5px 0 0 0;
+  font-weight: 400;
+}
+
+.importance-card-modern {
+  background: white;
+  transition: all 0.3s ease;
+  animation: slideInUp 0.6s ease-out both;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.importance-card-modern:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.importance-icon-container {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.bg-importance-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-importance-2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.bg-importance-3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.bg-importance-4 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.bg-importance-5 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.bg-importance-6 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+
+.importance-number {
+  font-size: 1.2rem;
+}
+
+.importance-card-title {
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 0 0 8px 0;
+  color: #2c3e50;
+  margin: 1rem 0 0.5rem 0;
 }
 
-.importance-description {
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  line-height: 1.5;
+.importance-card-description {
+  color: #555;
+  line-height: 1.6;
+  font-size: 0.95rem;
 }
 
 /* Animations */
@@ -708,7 +821,7 @@ onMounted(async () => {
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-50px);
   }
   to {
     opacity: 1;
@@ -719,7 +832,7 @@ onMounted(async () => {
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(50px);
   }
   to {
     opacity: 1;
@@ -730,7 +843,7 @@ onMounted(async () => {
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -739,48 +852,151 @@ onMounted(async () => {
 }
 
 /* Responsive Design */
-@media (max-width: 968px) {
-  .comparison-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .type-category:hover {
-    transform: translateY(-4px);
-  }
-  
-  .access-item:hover {
-    transform: translateY(-4px);
-  }
-}
-
 @media (max-width: 768px) {
-  .card-title {
-    font-size: 1.3rem !important;
+  .module-title {
+    font-size: 2.5rem;
   }
   
-  .title-icon {
+  .objective-banner {
+    padding: 15px 20px;
+  }
+  
+  .objective-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .timeline-container::before {
+    left: 30px;
+  }
+  
+  .timeline-item,
+  .timeline-item-reverse {
+    flex-direction: row;
+  }
+  
+  .timeline-marker {
+    margin: 0 1rem 0 0;
+  }
+  
+  .timeline-content {
+    max-width: none;
+  }
+  
+  .card-title-modern {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .title-icon-container {
+    margin-right: 0;
+  }
+  
+  .types-title-section,
+  .importance-title-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .types-main-title,
+  .importance-main-title {
     font-size: 1.5rem;
   }
   
-  .comparison-item,
-  .type-category,
-  .access-item,
-  .importance-item {
-    padding: 16px;
+  .comparison-card-modern {
+    margin-bottom: 1rem;
   }
   
-  .comparison-header,
-  .category-header {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
+  .access-card-modern {
+    margin-bottom: 1rem;
   }
   
-  .comparison-icon,
-  .category-number,
-  .access-icon,
-  .importance-number {
-    margin: 0;
+  .importance-card-modern {
+    margin-bottom: 1rem;
+  }
+  
+  .hero-module-section {
+    border-radius: 0 0 1rem 1rem;
+  }
+  
+  .definition-content {
+    padding: 20px;
+  }
+  
+  .comparison-section {
+    padding: 2rem 0;
+  }
+  
+  .timeline-container {
+    padding: 2rem 1rem;
+  }
+  
+  .timeline-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .module-title {
+    font-size: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.7rem;
+  }
+  
+  .title-main {
+    font-size: 1.5rem;
+  }
+  
+  .types-main-title,
+  .importance-main-title {
+    font-size: 1.3rem;
+  }
+  
+  .objective-text {
+    font-size: 1rem;
+  }
+  
+  .definition-text {
+    font-size: 1rem;
+  }
+  
+  .comparison-title-modern {
+    font-size: 1.2rem;
+  }
+  
+  .access-title-modern {
+    font-size: 1.1rem;
+  }
+  
+  .importance-card-title {
+    font-size: 1.1rem;
+  }
+  
+  .timeline-card-content,
+  .access-card-modern .v-card-text,
+  .importance-card-modern .v-card-text {
+    padding: 15px;
+  }
+  
+  .card-title-modern,
+  .types-title-section,
+  .importance-title-section {
+    padding: 20px;
+  }
+  
+  .definition-content {
+    padding: 15px;
   }
 }
 </style>

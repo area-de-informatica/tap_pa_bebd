@@ -274,23 +274,6 @@ const scrollToRoutes = () => {
 const navigateToRoute = (ruta) => {
   // Implementa la navegación según tu estructura de rutas
   console.log('Navegando a:', ruta)
-  
-  // Opciones de navegación que puedes usar:
-  
-  // Opción 1: Navegar usando el número de la ruta
-  // router.push(`/ruta/${ruta.numero}`)
-  
-  // Opción 2: Navegar usando un slug basado en el título
-  // const slug = ruta.titulo.toLowerCase().replace(/\s+/g, '-')
-  // router.push(`/ruta/${slug}`)
-  
-  // Opción 3: Navegar con parámetros de query
-  // router.push({ name: 'ruta', query: { id: ruta.numero } })
-  
-  // Opción 4: Navegar a una ruta específica con el objeto completo
-  // router.push({ name: 'ruta-detalle', params: { id: ruta.numero }, state: { ruta } })
-  
-  // Por ahora, como ejemplo, navegamos a una ruta genérica
   router.push(`/ruta/${ruta.numero}`)
 }
 
